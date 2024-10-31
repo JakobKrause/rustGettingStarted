@@ -11,15 +11,32 @@
 // Make the necessary code changes in the struct `ReportCard` and the impl
 // block to support alphabetical report cards in addition to numerical ones.
 
+//use std::collections::btree_map::Values;
+
 // TODO: Adjust the struct as described above.
-struct ReportCard {
-    grade: f32,
+struct ReportCard<T> {
+    grade: T,
     student_name: String,
     student_age: u8,
 }
+// struct Wrapper<T> {
+//     value: T,
+// }
+
+// TODO: Adapt the struct's implementation to be generic over the wrapped value.
+// impl<T> Wrapper<T> {
+//     fn new(value: T) -> Self {
+//         Wrapper { value }
+//     }
+// }
+
 
 // TODO: Adjust the impl block as described above.
-impl ReportCard {
+impl<T: std::fmt::Display> ReportCard<T> {
+    // fn new(grade: T, student_name: String, student_age: u8) -> Self {
+    //     ReportCard {grade, student_name, student_age}
+    // }
+
     fn print(&self) -> String {
         format!(
             "{} ({}) - achieved a grade of {}",
