@@ -1,3 +1,5 @@
+use std::path::Iter;
+
 #[derive(Debug, PartialEq, Eq)]
 enum DivisionError {
     // Example: 42 / 0
@@ -11,21 +13,34 @@ enum DivisionError {
 // TODO: Calculate `a` divided by `b` if `a` is evenly divisible by `b`.
 // Otherwise, return a suitable error.
 fn divide(a: i64, b: i64) -> Result<i64, DivisionError> {
-    todo!();
+    match b {
+        0 => Err(DivisionError::DivideByZero),
+        x if (a==i64::MIN && x ==-1) => Err(DivisionError::IntegerOverflow),
+        x if (a%x != 0) => Err(DivisionError::NotDivisible),        
+        x => Ok(a/b),
+    }
 }
 
 // TODO: Add the correct return type and complete the function body.
 // Desired output: `Ok([1, 11, 1426, 3])`
-fn result_with_list() {
+
+fn result_with_list() -> Result<Vec<i64>, DivisionError>{
     let numbers = [27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+    // let division_results = numbers.into_iter().map(|number| divide(number, 27)).unwrap();
+    // division_results
+    
+    let division_results: Result<Vec<i64>, DivisionError> = numbers.into_iter().map(|n| divide(n, 27)).collect();
+    division_results
 }
 
 // TODO: Add the correct return type and complete the function body.
 // Desired output: `[Ok(1), Ok(11), Ok(1426), Ok(3)]`
-fn list_of_results() {
+fn list_of_results() -> Vec<Result<i64, DivisionError>> {
     let numbers = [27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+    // let result: [Result<i32, _>; 4] = [Ok(1), Ok(11), Ok(1426), Ok(3)];
+    // result
+    let division_results:Vec<Result<i64, DivisionError>> = numbers.into_iter().map(|n| divide(n, 27)).collect();
+    division_results
 }
 
 fn main() {
@@ -63,6 +78,7 @@ mod tests {
 
     #[test]
     fn test_result_with_list() {
+        //assert_eq!(result_with_list().unwrap(), [1, 11, 1426, 3]);
         assert_eq!(result_with_list().unwrap(), [1, 11, 1426, 3]);
     }
 
