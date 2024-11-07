@@ -5,7 +5,7 @@
 // https://doc.rust-lang.org/std/convert/trait.TryFrom.html
 
 #![allow(clippy::useless_vec)]
-use std::convert::{TryFrom, TryInto};
+use std::{convert::{TryFrom, TryInto}};
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -28,14 +28,46 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
 
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        // if [tuple.0, tuple.1, tuple.2].iter().all(|&x| (0..=255).contains(&x)) {
+        //     Ok(Self {
+        //         red: tuple.0 as u8,
+        //         green: tuple.1 as u8,
+        //         blue: tuple.2 as u8,
+        //     })
+        // } else {
+        //     Err(IntoColorError::IntConversion)
+        // }
+        let (Ok(red), Ok(green), Ok(blue)) = (
+            u8::try_from(tuple.0),
+            u8::try_from(tuple.1),
+            u8::try_from(tuple.2),
+        ) else {
+            return Err(IntoColorError::IntConversion);
+        };
+
+        Ok(Self{red, green, blue})
+    }
 }
 
 // TODO: Array implementation.
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        Self::try_from((arr[0],arr[1],arr[2]))
+
+        // if arr.iter().all(|x| (0..=255).contains(x)) {
+        //     let mut arr_it = arr.iter();
+        //     Ok(Self {
+        //         red: *arr_it.next().unwrap() as u8,
+        //         green: *arr_it.next().unwrap() as u8,
+        //         blue: *arr_it.next().unwrap() as u8,
+        //     })
+        // } else {
+        //     Err(IntoColorError::IntConversion)
+        // }
+    }
 }
 
 // TODO: Slice implementation.
@@ -43,7 +75,23 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        Self::try_from((slice[0], slice[1], slice[2]))
+    
+    //     if slice.iter().all(|x| (0..=255).contains(x)) {
+    //         let mut arr_it = slice.iter();
+    //         Ok(Self {
+    //             red: *arr_it.next().unwrap() as u8,
+    //             green: *arr_it.next().unwrap() as u8,
+    //             blue: *arr_it.next().unwrap() as u8,
+    //         })
+    //     } else {
+    //     Err(IntoColorError::IntConversion)
+    // }
+    }
 }
 
 fn main() {
